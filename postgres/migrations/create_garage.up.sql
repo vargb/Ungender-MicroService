@@ -1,0 +1,8 @@
+CREATE TABLE garage(
+    carid BIGSERIAL PRIMARY KEY,
+    dom VARCHAR(55) NOT NULL,
+    lsd VARCHAR(55) NOT NULL,
+    uniqueid VARCHAR(55) NOT NULL,
+    lud VARCHAR(55) NOT NULL,
+    available BOOLEAN NOT NULL
+);
