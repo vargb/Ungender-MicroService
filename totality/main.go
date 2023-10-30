@@ -12,8 +12,8 @@ func main() {
 		return
 	}
 	router := gin.Default()
-	router.GET("/getusers", GetAll)
-	router.GET("/getusers/:id", GetById)
-	// router.POST("/postuser", Post)
+	router.GET("/getusers", userConnection.GetAll)
+	router.GET("/getusers/:id", userConnection.GetById)
+	router.POST("/postuser", userConnection.Post)
 	router.Run(":" + config.Port)
 }

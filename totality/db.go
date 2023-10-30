@@ -9,13 +9,6 @@ import (
 
 var UserDB Users
 
-type crud interface {
-	Post(user User) string
-	GetAll() Users
-	GetById(id string) User
-	GetByIds(ids []string) []User
-}
-
 type DBConnection interface {
 	Connection()
 }
@@ -48,6 +41,6 @@ func (con *Connection) Connection() *Users {
 	return users
 }
 
-func GetDBData() *Users {
+func (con *Connection) GetDBData() *Users {
 	return &UserDB
 }
