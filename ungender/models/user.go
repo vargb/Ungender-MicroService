@@ -5,11 +5,12 @@ import (
 )
 
 type User struct {
-	UserID   string `json:"userid"`
+	UserID   string `json:"userid" gorm:"primaryKey"`
 	Fname    string `json:"fname"`
 	Lname    string `json:"lname"`
+	Phno     string `json:"phno"`
 	Password string `json:"password"`
-	CarID    string `json:"carid"`
+	CarID    string `gorm:"foreignKey:CarID"`
 }
 
 func (g *Garage) InUseNow(user *User) bool {
