@@ -5,21 +5,22 @@ type AuthToken {
   expiredAt: Time!
 }
 
-"""
 type AuthResponse {
   authToken: AuthToken!
   user: User!
 }
-"""
-"""
+
 input Login {
   phno: String!
   password: String!
 }
-"""
 
 input Signup {
-  user: User
+  userid: String!
+  fname: String
+  lname: String
+  phno: String!
+  password: String!
 }
 
 input GetCar {
@@ -45,7 +46,7 @@ type Garage {
 }
 
 type Query {
-  getAll: [Garage!]!
+  getAll: [Garage]
 }
 
 type Mutation {

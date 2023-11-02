@@ -2,7 +2,7 @@ package potgres
 
 import (
 	"hopeugetknowuwont/ungender/config"
-	"hopeugetknowuwont/ungender/models"
+	"hopeugetknowuwont/ungender/graph/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +18,8 @@ type psqlHandler struct {
 }
 
 func New(db *gorm.DB) psqlHandler {
-	db.AutoMigrate(&models.Garage{})
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&model.Garage{})
+	db.AutoMigrate(&model.User{})
 	return psqlHandler{DB: db}
 }
 
@@ -36,10 +36,11 @@ func Init(config config.Config) (*gorm.DB, error) {
 }
 
 func (h *psqlHandler) GetAll(c *gin.Context) {
-	var cars []models.Garage
+	var cars []model.Garage
 	if res := h.DB.Find(&cars); res.Error != nil {
 		logrus.Error("Error in getting list of cars", res.Error)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"HeadsUp": "Error in getting the list of cars"})
+		h.Return(c)
 	}
 	c.IndentedJSON(http.StatusOK, cars)
 }
@@ -53,7 +54,7 @@ func (h *psqlHandler) Return(c *gin.Context) {
 }
 
 func (h *psqlHandler) PostGarage(c *gin.Context) {
-	var newcar models.Garage
+	var newcar model.Garage
 	if err := c.BindJSON(&newcar); err != nil {
 		return
 	}
@@ -62,12 +63,13 @@ func (h *psqlHandler) PostGarage(c *gin.Context) {
 		logrus.Error("Error in posting a car", res.Error)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"HeadsUp": "Error in posting the car"})
 		h.Return(c)
+		return
 	}
 	c.IndentedJSON(http.StatusCreated, gin.H{"HeadsUp": "new car added to the garage"})
 }
 
 func (h *psqlHandler) PostUser(c *gin.Context) {
-	var newUser models.User
+	var newUser model.User
 	if err := c.BindJSON(&newUser); err != nil {
 		return
 	}

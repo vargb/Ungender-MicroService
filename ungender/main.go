@@ -2,6 +2,7 @@ package main
 
 import (
 	"hopeugetknowuwont/ungender/config"
+	"hopeugetknowuwont/ungender/graph"
 	potgres "hopeugetknowuwont/ungender/pgres"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,8 @@ func main() {
 	router.POST("/postcar", potgres.GetPqHandler().PostGarage)
 	router.POST("postuser", potgres.GetPqHandler().PostUser)
 	//psqlconn := postgres.Connect()
-	router.Run(":" + config.Port)
+	router.POST("/query", graph.GraphqlHandler())
+	router.GET("/", graph.PlaygroundHandler())
 
+	router.Run(":" + config.Port)
 }
