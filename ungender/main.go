@@ -17,6 +17,7 @@ func main() {
 		logrus.Info(err)
 		return
 	}
+	router.Use(graph.GinContextToContextMiddleware())
 	router.GET("/getall", potgres.GetPqHandler().GetAll)
 	router.POST("/postcar", potgres.GetPqHandler().PostGarage)
 	router.POST("postuser", potgres.GetPqHandler().PostUser)

@@ -1,22 +1,11 @@
 scalar Time
 
-type AuthToken {
-  accessToken: String!
-  expiredAt: Time!
-}
-
-type AuthResponse {
-  authToken: AuthToken!
-  user: User!
-}
-
 input Login {
   phno: String!
   password: String!
 }
 
 input Signup {
-  userid: String!
   fname: String
   lname: String
   phno: String!
@@ -29,11 +18,12 @@ input GetCar {
 }
 
 type User {
-  userid: String!
+  userid: String
   fname: String
   lname: String
-  phno: String!
-  password: String!
+  phno: String
+  password: String
+  carid: String
 }
 
 type Garage {

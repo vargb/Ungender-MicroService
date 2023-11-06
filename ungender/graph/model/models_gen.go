@@ -2,20 +2,6 @@
 
 package model
 
-import (
-	"time"
-)
-
-type AuthResponse struct {
-	AuthToken *AuthToken `json:"authToken"`
-	User      *User      `json:"user"`
-}
-
-type AuthToken struct {
-	AccessToken string    `json:"accessToken"`
-	ExpiredAt   time.Time `json:"expiredAt"`
-}
-
 type Garage struct {
 	Carid           string  `json:"carid"`
 	DateOfManufac   *string `json:"DateOfManufac,omitempty"`
@@ -36,7 +22,6 @@ type Login struct {
 }
 
 type Signup struct {
-	Userid   string  `json:"userid"`
 	Fname    *string `json:"fname,omitempty"`
 	Lname    *string `json:"lname,omitempty"`
 	Phno     string  `json:"phno"`
@@ -44,9 +29,10 @@ type Signup struct {
 }
 
 type User struct {
-	Userid   string  `json:"userid"`
+	Userid   *string `json:"userid,omitempty"`
 	Fname    *string `json:"fname,omitempty"`
 	Lname    *string `json:"lname,omitempty"`
-	Phno     string  `json:"phno"`
-	Password string  `json:"password"`
+	Phno     *string `json:"phno,omitempty"`
+	Password *string `json:"password,omitempty"`
+	Carid    *string `json:"carid,omitempty"`
 }

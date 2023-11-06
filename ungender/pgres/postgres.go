@@ -18,8 +18,8 @@ type psqlHandler struct {
 }
 
 func New(db *gorm.DB) psqlHandler {
-	db.AutoMigrate(&model.Garage{})
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&Garage{})
+	db.AutoMigrate(&User{})
 	return psqlHandler{DB: db}
 }
 
