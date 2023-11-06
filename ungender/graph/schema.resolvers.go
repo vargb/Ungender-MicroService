@@ -7,8 +7,8 @@ package graph
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"errors"
-	"hopeugetknowuwont/ungender/graph/model"
 	models "hopeugetknowuwont/ungender/graph/model"
 	potgres "hopeugetknowuwont/ungender/pgres"
 	"time"
@@ -28,7 +28,7 @@ func (r *mutationResolver) Register(ctx context.Context, input models.Signup) (*
 	}
 	hash := sha256.New()
 	hash.Write([]byte(input.Phno))
-	hashString := string(hash.Sum(nil))
+	hashString := hex.EncodeToString(hash.Sum(nil))
 	newUser := &models.User{
 		Fname:    input.Fname,
 		Lname:    input.Lname,
@@ -84,7 +84,7 @@ func (r *mutationResolver) Signin(ctx context.Context, input models.Login) (*str
 			return nil, err
 		}
 
-		c.SetCookie(input.Phno, tokenString, 60, "/", "localhost", false, true)
+		c.SetCookie(input.Phno, tokenString, 120, "/", "localhost", false, true)
 
 		successful := "You have logged in successfully"
 		return &successful, nil
@@ -149,8 +149,9 @@ func (r *mutationResolver) Getcar(ctx context.Context, input models.GetCar) (*mo
 		return nil, errors.New("current car is unavailable, pls use a another car. To get the list use getAll query")
 	}
 
-	h.DB.Model(&expectedUser).Updates(potgres.User{CarId: input.Carid})
-	h.DB.Model(&expectedCar).Updates(potgres.Garage{Available: false})
+	temp := false
+	h.DB.Model(expectedCar).Updates(potgres.Garage{Available: temp})
+	h.DB.Model(expectedUser).Updates(potgres.User{CarId: input.Carid})
 
 	newUser := &models.User{Fname: &expectedUser.Fname, Lname: &expectedUser.Lname, Userid: &expectedUser.UserId, Phno: &expectedUser.Phno, Carid: &input.Carid}
 	return newUser, nil
@@ -185,13 +186,14 @@ func (r *mutationResolver) Returncar(ctx context.Context, input models.GetCar) (
 		return nil, tx.Error
 	}
 
-	if !expectedCar.Available {
+	if expectedCar.Available {
 		logrus.Info("current car is unavailable, pls use a another car. To get the list use getAll query")
 		return nil, errors.New("current car is unavailable, pls use a another car. To get the list use getAll query")
 	}
 
-	h.DB.Model(&expectedUser).Updates(potgres.User{CarId: ""})
-	h.DB.Model(&expectedCar).Updates(potgres.Garage{Available: true, LastUsedDate: time.Now().String()})
+	temp := ""
+	h.DB.Model(expectedUser).Updates(potgres.User{CarId: temp})
+	h.DB.Model(expectedCar).Updates(potgres.Garage{Available: true, LastUsedDate: time.Now().String()})
 
 	newUser := &models.User{Fname: &expectedUser.Fname, Lname: &expectedUser.Lname, Userid: &expectedUser.UserId, Phno: &expectedUser.Phno, Carid: &input.Carid}
 	return newUser, nil
@@ -199,7 +201,7 @@ func (r *mutationResolver) Returncar(ctx context.Context, input models.GetCar) (
 
 // GetAll is the resolver for the getAll field.
 func (r *queryResolver) GetAll(ctx context.Context) ([]*models.Garage, error) {
-	var cars []*model.Garage
+	var cars []*models.Garage
 	h := potgres.GetPqHandler()
 	if res := h.DB.Find(&cars); res.Error != nil {
 		logrus.Error("Error in getting the cars", res.Error)

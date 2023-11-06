@@ -54,7 +54,7 @@ func (h *psqlHandler) Return(c *gin.Context) {
 }
 
 func (h *psqlHandler) PostGarage(c *gin.Context) {
-	var newcar model.Garage
+	var newcar Garage
 	if err := c.BindJSON(&newcar); err != nil {
 		return
 	}
@@ -69,7 +69,7 @@ func (h *psqlHandler) PostGarage(c *gin.Context) {
 }
 
 func (h *psqlHandler) PostUser(c *gin.Context) {
-	var newUser model.User
+	var newUser User
 	if err := c.BindJSON(&newUser); err != nil {
 		return
 	}
