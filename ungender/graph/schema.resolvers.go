@@ -149,8 +149,7 @@ func (r *mutationResolver) Getcar(ctx context.Context, input models.GetCar) (*mo
 		return nil, errors.New("current car is unavailable, pls use a another car. To get the list use getAll query")
 	}
 
-	temp := false
-	h.DB.Model(expectedCar).Updates(potgres.Garage{Available: temp})
+	h.DB.Model(expectedCar).Where("carid = ?", expectedCar.Carid).Update("available", false)
 	h.DB.Model(expectedUser).Updates(potgres.User{CarId: input.Carid})
 
 	newUser := &models.User{Fname: &expectedUser.Fname, Lname: &expectedUser.Lname, Userid: &expectedUser.UserId, Phno: &expectedUser.Phno, Carid: &input.Carid}
@@ -186,16 +185,15 @@ func (r *mutationResolver) Returncar(ctx context.Context, input models.GetCar) (
 		return nil, tx.Error
 	}
 
-	if expectedCar.Available {
-		logrus.Info("current car is unavailable, pls use a another car. To get the list use getAll query")
-		return nil, errors.New("current car is unavailable, pls use a another car. To get the list use getAll query")
+	if expectedCar.Available || expectedCar.Carid != expectedUser.CarId {
+		logrus.Info("current car cant be returned, pls use a valid car ID. To get the list use getAll query")
+		return nil, errors.New("current car cant be returned, pls use a valid car ID. To get the list use getAll query")
 	}
 
-	temp := ""
-	h.DB.Model(expectedUser).Updates(potgres.User{CarId: temp})
+	h.DB.Model(expectedUser).Update("car_id", "")
 	h.DB.Model(expectedCar).Updates(potgres.Garage{Available: true, LastUsedDate: time.Now().String()})
 
-	newUser := &models.User{Fname: &expectedUser.Fname, Lname: &expectedUser.Lname, Userid: &expectedUser.UserId, Phno: &expectedUser.Phno, Carid: &input.Carid}
+	newUser := &models.User{Fname: &expectedUser.Fname, Lname: &expectedUser.Lname, Userid: &expectedUser.UserId, Phno: &expectedUser.Phno, Carid: nil}
 	return newUser, nil
 }
 

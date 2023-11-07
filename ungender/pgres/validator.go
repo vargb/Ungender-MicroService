@@ -29,5 +29,5 @@ type Garage struct {
 	DateOfManufac   string `json:"DateOfManufac"`
 	LastServiceDate string `json:"LastServiceDate"`
 	LastUsedDate    string `json:"LastUsedDate" gorm:"not null"`
-	Available       bool   `json:"Available" gorm:"not null"`
+	Available       bool   `json:"Available"`
 }
