@@ -149,6 +149,11 @@ func (r *mutationResolver) Getcar(ctx context.Context, input models.GetCar) (*mo
 		return nil, errors.New("current car is unavailable, pls use a another car. To get the list use getAll query")
 	}
 
+	if expectedUser.CarId != "" {
+		logrus.Info("return the car and then ask for another")
+		return nil, errors.New("return the car and then ask for another")
+	}
+
 	h.DB.Model(expectedCar).Where("carid = ?", expectedCar.Carid).Update("available", false)
 	h.DB.Model(expectedUser).Updates(potgres.User{CarId: input.Carid})
 
